@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,76 +24,49 @@ public class restApiVehicles {
     @Autowired
     private VehicleDao vehicleDao;
     /**
-     * take in vehicle object and write it to a local txt file.
-     * always appends to file
-     * if 5 POST requests are made, the local file will contain 5 vehicles in JSON
+     * take in vehicle object and add it to database
+     * always appends to database
      *
      * @paramewVehicle n
      * @return
      * @throws IOException
      */
 
-    // New Fun
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST,consumes = "application/json")
-    public Vehicle addVehicle(@RequestBody ObjectNode node) throws IOException {
-//        //objectMapper provides functionality for reading and writing JSON
-//        ObjectMapper mapper = new ObjectMapper();
-//        //create a FileWrite to write to inventory.txt and APPEND mode is true
-//        FileWriter output = new FileWriter("./files/inventory.txt", true);
-//        //serialize greeting object to JSON and write it to file
-//        mapper.writeValue(output, newVehicle);
-//        //Append a new line character to the file
-//        //The above FileWriter ("output") is automatically closed by the mapper.
-//        writeStringToFile(new File("./files/inventory.txt"),
-//                System.lineSeparator(), //newline String
-//                CharEncoding.UTF_8, //encoding type
-//                true);
-//
-//        return newVehicle;
-        String makeModel =node.get("makeModel").asText();
-        Integer year =node.get("year").asInt();
-        Double retailPrice =node.get("retailPrice").asDouble();
-        Vehicle vehicle =  new Vehicle(makeModel, year, retailPrice);
-        vehicleDao.create(vehicle);
-        return vehicle;
-
+    public Vehicle addVehicle(@RequestBody Vehicle newVehicle) throws IOException {
+        vehicleDao.create(newVehicle);
+        return newVehicle;
 
     }
 
     /**
-     * take given id and find the vehicles that has the matching id
-     * It will iterate the local file line-by-line, check if the id matches, and if there is a match
+     * take given id and find the vehicle that has the matching id
      * return the vehicle object.
      *
-     * @param id
-     * @return
-     * @throws IOException
+     * @param id id of the vehicle that wants to be found
+     * @return vehicle that matches ID
+     * @throws IOException throws if there is no vehicle with matching id
      */
     @RequestMapping(value = "/getVehicle/{id}", method = RequestMethod.GET)
     public Vehicle getVehicle(@PathVariable("id") int id) throws IOException {
-        FileReader fr = new FileReader("./files/inventory.txt");
-        BufferedReader br = new BufferedReader(fr);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        while (br.readLine() != null) {
-            Vehicle localVeh = mapper.readValue(br.readLine(), Vehicle.class);
-            if (localVeh.getId() == id) {
-                return localVeh;
-            }
+        //TODO: fix this if statement
+        if(vehicleDao.getById(id) != null) {
+            return vehicleDao.getById(id);
         }
-        return null;
+        throw new IOException("Id does not exist.");
+
     }
 
     /**
-     * Iterate the local file line-by-line
-     * Check if the current line’s vehicle’s id matches the vehicle id that is passed in
-     * If there is a match, update the current line with the vehicle that was passed in
+     * updates vehicle
      *
-     * @param newVehicle
-     * @return
-     * @throws IOException
+     * @param newVehicle vehicle that wants to be added to database
+     * @return the new vehicle
+     * @throws IOException if the vehicle does not exist in the first place.
      */
+
+    // TODO: finish return
     @RequestMapping(value = "/updateVehicle", method = RequestMethod.PUT)
     public Vehicle updateVehicle(@RequestBody Vehicle newVehicle) throws IOException {
 //        Vehicle localVeh = ObjectMapper.readValue(new File("src/test/resources/json_car.json"), Vehicle.class);
@@ -113,8 +87,7 @@ public class restApiVehicles {
     }
 
     /**
-     * takes the given id and deletes from the local file.
-     * It will iterate the local file line-by-line to check if the given id exists, then delete
+     * takes the given id and deletes from the database.
      *
      * @param id
      * @return ResponseEntity<String>
@@ -122,16 +95,10 @@ public class restApiVehicles {
      */
     @RequestMapping(value = "/deleteVehicle/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteVehicle(@PathVariable("id") int id) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Vehicle> vehicleList = new ArrayList<>(Arrays.asList(mapper.readValue(Paths.get("books.json").toFile(), Vehicle[].class)));
-        for (Vehicle tempVeh : vehicleList) {
-//            String message = FileUtils.readFileToString(new File("./files/inventory.txt"), StandardCharsets.UTF_8.name());
-//            Vehicle vehicle = mapper.readValue(message, Vehicle.class);
-            if (tempVeh.getId() == id) {
-                FileUtils.writeStringToFile(new File("./files/inventory.txt"), "", StandardCharsets.UTF_8.name());
+            if (vehicleDao.getById(id) != null) {
+                vehicleDao.deleteVehicle(id);
+                return new ResponseEntity("Deleted", HttpStatus.OK);
             }
-            return new ResponseEntity("Deleted", HttpStatus.OK);
-        }
         return new ResponseEntity("Not Found", HttpStatus.BAD_REQUEST);
     }
 
@@ -142,6 +109,8 @@ public class restApiVehicles {
      * @return
      * @throws IOException
      */
+
+    // TODO: Do this entire method lol
     @RequestMapping(value = "/getLatestVehicles", method = RequestMethod.GET)
     public List<Vehicle> getLatestVehicles() throws IOException {
         List<Vehicle> returnArray = new ArrayList<>();

@@ -11,11 +11,40 @@ import javax.persistence.PersistenceContext;
 public class VehicleDao {
     @PersistenceContext
     private EntityManager entityManager;
+
+    /**
+     * Crud
+     * INSERT SQL
+     */
     public void create(Vehicle vehicle) {
         entityManager.persist(vehicle);
-        return;
     }
+
+    /**
+     * cRud
+     * SELECT SQL
+     * @param id
+     * @return
+     */
     public Vehicle getById(int id) {
         return entityManager.find(Vehicle.class, id);
+    }
+
+    /**
+     * crUd
+     * UPDATE SQL
+     * @param newV
+     */
+    public void updateVehicle(Vehicle newV){
+        entityManager.
+    }
+
+    /**
+     * cruD
+     * DELETE SQL
+     * @param id
+     */
+    public void deleteVehicle(int id) {
+        entityManager.remove(getById(id));
     }
 }

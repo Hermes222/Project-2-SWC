@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.bytebuddy.description.field.FieldDescription;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -48,11 +49,11 @@ public class MyTasks {
 
         String[] makeAndModel = {"Toyota Camry", "Honda Civic", "Toyota Tundra", "Honda Ridgeline"};
         Integer randomYear = new Random().nextInt(31) + 1986;
-        Double randomRetailPrice = new Random().nextDouble(30001) + 15000;
+        Integer randomRetailPrice = new Random().nextInt(30001) + 15000;
         String randomMakeAndModel = makeAndModel[new Random().nextInt(makeAndModel.length)];
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Vehicle vehicle = new Vehicle(id, randomMakeAndModel, randomYear,  randomRetailPrice);
+        Vehicle vehicle = new Vehicle(id, randomMakeAndModel, randomYear, (double) randomRetailPrice);
         objectMapper.writeValue(new File("./files/inventory.txt"), vehicle);
 
         restTemplate.put("http://localhost:8080/addVehicle/", vehicle);
@@ -86,10 +87,11 @@ public class MyTasks {
         String[] makeAndModel = {"Toyota Camry", "Honda Civic", "Toyota Tundra", "Honda Ridgeline"};
         int randomID = new Random().nextInt(100);
         Integer randomYear = new Random().nextInt(31) + 1986;
-        Double randomRetailPrice = new Random().nextDouble(30001) + 15000;
+        Integer randomRetailPrice = new Random().nextInt(30001) + 15000;
         String randomMakeAndModel = makeAndModel[new Random().nextInt(makeAndModel.length)];
 
-        Vehicle newVehicle = new Vehicle(randomID, randomMakeAndModel, randomYear, randomRetailPrice);
+
+        Vehicle newVehicle = new Vehicle(randomID, randomMakeAndModel, randomYear, (double) randomRetailPrice );
 
         restTemplate.put("http://localhost:8080/updateVehicle/", newVehicle);
         restTemplate.getForObject("http://localhost:8080/getVehicle/"+ randomID, Vehicle.class);
