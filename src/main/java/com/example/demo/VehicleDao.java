@@ -36,7 +36,7 @@ public class VehicleDao {
      * @param newV
      */
     public void updateVehicle(Vehicle newV){
-        entityManager.
+        entityManager.merge(newV);
     }
 
     /**

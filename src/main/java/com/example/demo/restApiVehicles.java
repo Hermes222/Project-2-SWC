@@ -23,16 +23,17 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 public class restApiVehicles {
     @Autowired
     private VehicleDao vehicleDao;
+
     /**
      * take in vehicle object and add it to database
      * always appends to database
      *
-     * @paramewVehicle n
      * @return
      * @throws IOException
+     * @paramewVehicle n
      */
 
-    @RequestMapping(value = "/addVehicle", method = RequestMethod.POST,consumes = "application/json")
+    @RequestMapping(value = "/addVehicle", method = RequestMethod.POST, consumes = "application/json")
     public Vehicle addVehicle(@RequestBody Vehicle newVehicle) throws IOException {
         vehicleDao.create(newVehicle);
         return newVehicle;
@@ -51,7 +52,7 @@ public class restApiVehicles {
     public Vehicle getVehicle(@PathVariable("id") int id) throws IOException {
 
         //TODO: fix this if statement
-        if(vehicleDao.getById(id) != null) {
+        if (vehicleDao.getById(id) != null) {
             return vehicleDao.getById(id);
         }
         throw new IOException("Id does not exist.");
@@ -69,21 +70,8 @@ public class restApiVehicles {
     // TODO: finish return
     @RequestMapping(value = "/updateVehicle", method = RequestMethod.PUT)
     public Vehicle updateVehicle(@RequestBody Vehicle newVehicle) throws IOException {
-//        Vehicle localVeh = ObjectMapper.readValue(new File("src/test/resources/json_car.json"), Vehicle.class);
-
-        Scanner sc = new Scanner(new File("D://input.txt"));
-        StringBuffer buffer = new StringBuffer();
-
-        ObjectMapper mapper = new ObjectMapper();
-//        mapper.value
-        while (sc.hasNextLine()) {
-            Vehicle localVeh = mapper.readValue(sc.nextLine(), Vehicle.class);
-            if (localVeh.getId() == newVehicle.getId()) {
-                sc.nextLine().replaceAll(newVehicle.toString(), System.lineSeparator());
-                return localVeh;
-            }
-        }
-        return null;
+        vehicleDao.updateVehicle(newVehicle);
+        return newVehicle;
     }
 
     /**
@@ -95,16 +83,16 @@ public class restApiVehicles {
      */
     @RequestMapping(value = "/deleteVehicle/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteVehicle(@PathVariable("id") int id) throws IOException {
-            if (vehicleDao.getById(id) != null) {
-                vehicleDao.deleteVehicle(id);
-                return new ResponseEntity("Deleted", HttpStatus.OK);
-            }
+        if (vehicleDao.getById(id) != null) {
+            vehicleDao.deleteVehicle(id);
+            return new ResponseEntity("Deleted", HttpStatus.OK);
+        }
         return new ResponseEntity("Not Found", HttpStatus.BAD_REQUEST);
     }
 
     /**
      * return the most recent 10 vehicles (as a list) that were added to
-     * the inventory.
+     * the database.
      *
      * @return
      * @throws IOException
@@ -113,25 +101,6 @@ public class restApiVehicles {
     // TODO: Do this entire method lol
     @RequestMapping(value = "/getLatestVehicles", method = RequestMethod.GET)
     public List<Vehicle> getLatestVehicles() throws IOException {
-        List<Vehicle> returnArray = new ArrayList<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            // convert JSON array to list of Vehicle
-            List<Vehicle> vehicleList = new ArrayList<>(Arrays.asList(mapper.readValue(Paths.get("books.json").toFile(), Vehicle[].class)));
 
-            // Add 10 elements
-            for (int i = 0; i < 10; i++) {
-                returnArray.add(vehicleList.get(vehicleList.size() - i));
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return returnArray;
     }
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public void test()  {
-        System.out.println("Hello World");
-    }
-
 }
