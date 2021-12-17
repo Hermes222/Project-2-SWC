@@ -47,4 +47,12 @@ public class VehicleDao {
     public void deleteVehicle(int id) {
         entityManager.remove(getById(id));
     }
+
+    /**
+     * cruD
+     * DELETE SQL
+     */
+    public Vehicle getLatestVehicle() {
+        return (Vehicle) entityManager.createNativeQuery("SELECT * FROM egr327 ORDER BY ID DECREASING LIMIT 1");
+    }
 }

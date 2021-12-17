@@ -1,24 +1,13 @@
 package com.example.demo;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
-import static org.apache.commons.io.FileUtils.writeStringToFile;
 @RestController
 public class restApiVehicles {
     @Autowired
@@ -50,8 +39,6 @@ public class restApiVehicles {
      */
     @RequestMapping(value = "/getVehicle/{id}", method = RequestMethod.GET)
     public Vehicle getVehicle(@PathVariable("id") int id) throws IOException {
-
-        //TODO: fix this if statement
         if (vehicleDao.getById(id) != null) {
             return vehicleDao.getById(id);
         }
@@ -101,6 +88,13 @@ public class restApiVehicles {
     // TODO: Do this entire method lol
     @RequestMapping(value = "/getLatestVehicles", method = RequestMethod.GET)
     public List<Vehicle> getLatestVehicles() throws IOException {
-
+        List<Vehicle> returnList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            returnList.add(vehicleDao.getLatestVehicle());
+        }
+        if (returnList.size() != 10) {
+            System.out.println(new ResponseEntity("Not Enough Entries", HttpStatus.BAD_REQUEST));
+        }
+        return returnList;
     }
 }
