@@ -12,7 +12,7 @@ public class Vehicle implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+//    private int id;
     private String makeModel;
     private Integer year;
     private Double retailPrice;
@@ -24,7 +24,7 @@ public class Vehicle implements Serializable {
     }
 
     public Vehicle(int inputId, String inputMakeModel, Integer inputModelYear, Double inputRetailPrice) {
-        this.id = inputId;
+//        this.id = inputId;
         this.makeModel = inputMakeModel;
         this.year = inputModelYear;
         this.retailPrice = inputRetailPrice;
@@ -34,16 +34,16 @@ public class Vehicle implements Serializable {
         year = inputModelYear;
         retailPrice = inputRetailPrice;
     }
-    public void setId(){
-        this.id = id;
-    }
+//    public void setId(){
+//        this.id = id;
+//    }
 
     /**
      * getter method for id of vehicle
      *
      * @return the id of the vehicle
      */
-    public int getId() { return this.id; }
+//    public int getId() { return this.id; }
 
     /**
      * setter method for make and model of vehicle.

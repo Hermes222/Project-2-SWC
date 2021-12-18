@@ -26,14 +26,13 @@ public class restApiVehicles {
     public Vehicle addVehicle(@RequestBody Vehicle newVehicle) throws IOException {
         vehicleDao.create(newVehicle);
         return newVehicle;
-
     }
 
     /**
      * take given id and find the vehicle that has the matching id
      * return the vehicle object.
      *
-     * @param id id of the vehicle that wants to be found
+     * @param id of the vehicle that wants to be found
      * @return vehicle that matches ID
      * @throws IOException throws if there is no vehicle with matching id
      */
@@ -42,8 +41,7 @@ public class restApiVehicles {
         if (vehicleDao.getById(id) != null) {
             return vehicleDao.getById(id);
         }
-        throw new IOException("Id does not exist.");
-
+        throw new IOException("ID does not exist.");
     }
 
     /**
@@ -54,7 +52,6 @@ public class restApiVehicles {
      * @throws IOException if the vehicle does not exist in the first place.
      */
 
-    // TODO: finish return
     @RequestMapping(value = "/updateVehicle", method = RequestMethod.PUT)
     public Vehicle updateVehicle(@RequestBody Vehicle newVehicle) throws IOException {
         vehicleDao.updateVehicle(newVehicle);
@@ -85,10 +82,9 @@ public class restApiVehicles {
      * @throws IOException
      */
 
-    // TODO: Do this entire method lol
     @RequestMapping(value = "/getLatestVehicles", method = RequestMethod.GET)
     public List<Vehicle> getLatestVehicles() throws IOException {
-        List<Vehicle> returnList = new ArrayList<>();
+        List<Vehicle> returnList = new ArrayList<>(10);
         for (int i = 0; i < 10; i++) {
             returnList.add(vehicleDao.getLatestVehicle());
         }
